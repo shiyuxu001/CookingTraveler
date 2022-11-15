@@ -1,4 +1,4 @@
-package com.example.cookingntraveler
+package com.example.cookingntraveler.api
 
 import com.google.gson.annotations.SerializedName
 
@@ -46,9 +46,5 @@ data class Recipe (
     @SerializedName("strSource") val strSource : String,
     @SerializedName("strImageSource") val strImageSource : String,
     @SerializedName("strCreativeCommonsConfirmed") val strCreativeCommonsConfirmed : String,
-    @SerializedName("dateModified") val dateModified : String,
-
-
-
-
+    @SerializedName("dateModified") val dateModified : String
 )

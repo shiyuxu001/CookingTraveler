@@ -1,4 +1,4 @@
-package com.example.cookingntraveler
+package com.example.cookingntraveler.api
 
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -7,33 +7,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import retrofit2.Call
 
-class RecipesApi {
+interface RecipesApi {
 
-    // This function needs to be called from a coroutine, hence the suspend
-    // in its type.  Also note the @Query annotation, which says that when
-    // called, retrofit will add "&difficulty=%s".format(level) to the URL
-    // Thanks, retrofit!
-    // Hardcode several parameters in the GET for simplicity
-    // So URL can have & and ? characters
-    // XXX Write me: Retrofit annotation, see CatNet
     @GET("filter.php?")
-    suspend fun getCountryRecipes(@Query("country") level: String) : Call<List<Recipe>>
-
-    suspend fun getCategoryRecipes(): Call<List<Recipe>>
+    suspend fun getCountryRecipes(@Query("a") level: String) : FilterRecipeResponse
+    suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipeResponse
+    suspend fun getIngredientsRecipes(@Query("i") ingredient: String): FilterRecipeResponse
 
     @GET("lookup.php")
-    suspend fun getRecipe()
-    suspend fun
+    suspend fun getRecipe(@Query("i") mealId: Int) : RecipeResponse
+
     @GET("random.php")
-    suspend fun getRandomrecipe() : Call<Recipe>
+    suspend fun getRandomRecipe() : RecipeResponse
 
 
-
-
-    // I just looked at the response and "parsed" it by eye
-    data class TriviaResponse(val results: List<TriviaQuestion>)
+    class FilterRecipeResponse(val data: FilterRecipeData)
+    class FilterRecipeData(val data: List<FilterRecipe>)
+    class RecipeResponse(val data: Recipe)
 
     companion object {
         // Leave this as a simple, base URL.  That way, we can have many different
@@ -41,7 +32,7 @@ class RecipesApi {
         // https://square.github.io/okhttp/4.x/okhttp/okhttp3/-http-url/
         var url = HttpUrl.Builder()
             .scheme("https")
-            .host("themealdb.com")
+            .host("www.themealdb.com/api/json/v1/1")
             .build()
 
         // Public create function that ties together building the base
