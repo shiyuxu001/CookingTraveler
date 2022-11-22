@@ -11,20 +11,15 @@ import retrofit2.http.Query
 interface RecipesApi {
 
     @GET("filter.php?")
-    suspend fun getCountryRecipes(@Query("a") level: String) : FilterRecipeResponse
-    suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipeResponse
-    suspend fun getIngredientsRecipes(@Query("i") ingredient: String): FilterRecipeResponse
+    suspend fun getCountryRecipes(@Query("a") level: String) : List<FilterRecipe>
+    suspend fun getCategoryRecipes(@Query("c") category: String): List<FilterRecipe>
+    suspend fun getIngredientsRecipes(@Query("i") ingredient: String): List<FilterRecipe>
 
     @GET("lookup.php")
-    suspend fun getRecipe(@Query("i") mealId: Int) : RecipeResponse
+    suspend fun getRecipe(@Query("i") mealId: Int) : Recipe
 
     @GET("random.php")
-    suspend fun getRandomRecipe() : RecipeResponse
-
-
-    class FilterRecipeResponse(val data: FilterRecipeData)
-    class FilterRecipeData(val data: List<FilterRecipe>)
-    class RecipeResponse(val data: Recipe)
+    suspend fun getRandomRecipe() :Recipe
 
     companion object {
         // Leave this as a simple, base URL.  That way, we can have many different

@@ -49,16 +49,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:name="com.example.cookingntraveler.RecipesFragment"
-        android:id="@+id/mainContainer"
-        app:layout_constraintTop_toBottomOf="@id/inputET"
-        app:layout_constraintBottom_toTopOf="@id/random"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+<!--    <androidx.fragment.app.FragmentContainerView-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:name="com.example.cookingntraveler.RecipesFragment"-->
+<!--        android:id="@+id/mainContainer"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/inputET"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/random"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        />-->
 
     <!--    <fragment-->
     <!--        android:id="@+id/nav_host_fragment_content_main"-->
