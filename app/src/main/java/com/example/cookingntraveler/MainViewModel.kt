@@ -18,7 +18,8 @@ class MainViewModel : ViewModel() {
     private val recipesList = MutableLiveData<List<FilterRecipe>>()
     private val displayedList = MutableLiveData<List<FilterRecipe>>()
     private val selectedArea = MutableLiveData<String>()
-    private var recipesByCountry = listOf<String>()
+    private var recipesByCountry = mutableListOf<FilterRecipe>()
+    private var recipesByCategory = mutableListOf<FilterRecipe>()
     var fetchDone : MutableLiveData<Boolean> = MutableLiveData(false)
     init {
         netRefresh()
@@ -64,18 +65,27 @@ class MainViewModel : ViewModel() {
     fun netRefresh() {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
-//            convertCountry(selectedArea.value.toString())
+            convertCountry(selectedArea.value.toString())
+            val areaList = recipeRepository.getCountryRecipes(country)
+            for (recipe in areaList) {
+                recipesByCountry.add(recipe)
+            }
+            for (category in categories) {
+               val categoryList = recipeRepository.getCategoryRecipes(category)
+                for (recipe in categoryList) {
+                    recipesByCategory.add(recipe)
+                }
+            }
+            // make call to reduce recipes shown ()
+            // postValue on recipesList and displayed recipes list
+            // ONLY CALL REDUCE RECIPES if categories is not empty
 
-//            recipesList.postValue(recipeRepository.getCountryRecipes(country))
-//            for (category in categories) {
-//                recipesList.postValue(recipeRepository.getCategoryRecipes(category))
-//            }
         }
     }
 
     // only if a filter has been selected do this logic:
     fun reduceRecipesShown() {
-        // store the what's being returned from the category call into a variable, making it each to
-        // remove when a category is unselected
+        // using recipes by category and recipes by Country, do cross referencing, this function reduceRecipesShow()
+        // is a helper method for net refresh
     }
 }
