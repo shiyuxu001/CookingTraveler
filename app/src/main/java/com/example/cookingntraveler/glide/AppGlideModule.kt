@@ -42,7 +42,7 @@ object Glide {
                     .asBitmap()
                     .load(urlFallback)
                     .apply(glideOptions)
-                    .error(R.color.colorAccent)
+                    //.error(R.color.colorAccent)
             )
             .into(imageView)
     }

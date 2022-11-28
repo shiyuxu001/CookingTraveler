@@ -19,16 +19,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setSupportActionBar(binding.toolbar)
-
         val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
+        setSupportActionBar(activityMainBinding.toolbar)
         binding = activityMainBinding.contentMain
 
+        val mapFrag = HomeFragment()
+
+        //open fragment
+        getSupportFragmentManager()
+            .beginTransaction().replace(R.id.google_map,mapFrag)
+            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController = findNavController(R.id.google_map) //?? is this right
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
