@@ -1,4 +1,5 @@
 package com.example.cookingntraveler
+import android.location.Geocoder
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,12 +23,15 @@ class HomeFragment : Fragment() {
     private lateinit var _binding : MapFragmentBinding
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
+//    private val mainActivity: MainActivity
+    private lateinit var geocoder: Geocoder
     private lateinit var selectedArea: MutableLiveData<String>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Initialize view
+//        geocoder = Geocoder()
         _binding = MapFragmentBinding.inflate(inflater,container,false)
         //val view: View = inflater.inflate(, container, false)
 
@@ -56,6 +60,9 @@ class HomeFragment : Fragment() {
 
                 // Add marker on map
                 googleMap.addMarker(markerOptions)
+
+//                selectedArea = geocoder.getFromLocation(point.latitude, point.longitude, 1).getCountryName()
+
             }
         }
         // Return view

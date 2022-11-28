@@ -4,8 +4,11 @@ import android.R
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -20,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding : ContentMainBinding
+    private val viewModel: MainViewModel by viewModels()
     private val recipeTitle = "Recipe"
     private val mapTitle = "Map"
 
@@ -31,6 +35,20 @@ class MainActivity : AppCompatActivity() {
         binding = activityMainBinding.contentMain
 
         val mapFrag = HomeFragment()
+        // TODO: make sure we handle user manually searching a country (must make it in format: Canada ... )
+        mapFrag.observeSelectedArea().observe(this) {
+            viewModel.convertCountry(it)
+            viewModel.netRefresh()
+            // take into consideration if not a valid country is clicked -> snack bar
+                // "no recipes found for area" either: give random recipe/ all recipes or nothing
+            // try to see if google maps api has "nearby countries"; continental food
+            // logic ... api call?
+        }
+        val recipeFrag = RecipesFragment()
+        recipeFrag.observeCategories().observe(this) {
+            viewModel.netRefresh() // ... find out the call
+        }
+
 
         //open fragment
         getSupportFragmentManager()

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cookingntraveler.databinding.RecipesFragmentBinding
 
@@ -18,6 +19,8 @@ class RecipesFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var categories: MutableLiveData<List<String>>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +29,7 @@ class RecipesFragment : Fragment() {
 
         _binding = RecipesFragmentBinding.inflate(inflater, container, false)
         return binding.root
+        // TODO: initialize recycler view
 
     }
 
@@ -40,5 +44,9 @@ class RecipesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun observeCategories(): MutableLiveData<List<String>> {
+        return categories
     }
 }

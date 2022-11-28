@@ -1,6 +1,5 @@
 package com.example.cookingntraveler
 
-import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,23 +8,25 @@ import com.example.cookingntraveler.api.RecipeRepository
 import com.example.cookingntraveler.api.RecipesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.cookingntraveler.glide.Glide
-import java.util.*
 
 class MainViewModel : ViewModel() {
     // XXX You need some important member variables
-    private var country = "American"
+    private var country = "American" //TODO : hmmm
     private var categories = listOf<String>()
     private val recipeApi = RecipesApi.create()
     private val recipeRepository = RecipeRepository(recipeApi)
     private val recipesList = MutableLiveData<List<FilterRecipe>>()
+    private val displayedList = MutableLiveData<List<FilterRecipe>>()
     private val selectedArea = MutableLiveData<String>()
+    private var recipesByCountry = listOf<String>()
     var fetchDone : MutableLiveData<Boolean> = MutableLiveData(false)
     init {
         netRefresh()
     }
 
-    fun convertCountry(area: String) {
+
+    fun convertCountry(area: String) : String {
+
         country = when(area) {
             // Sanitize input
             "Japan" -> "Japanese"
@@ -52,22 +53,29 @@ class MainViewModel : ViewModel() {
             "Morocco" -> "Moroccan"
             "Mexico" -> "Mexican"
             "Russia" -> "Russian"
-            "Spain" -> "Spainish"
+            "Spain" -> "Spanish"
             "Tunisia" -> "Tunisian"
             "Portugal" -> "Portuguese"
             else -> "None"
         }
+        return country
     }
 
     fun netRefresh() {
-        // XXX Write me.  This is where the network request is initiated.
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            convertCountry(selectedArea.value.toString())
-            recipesList.postValue(recipeRepository.getCountryRecipes(country))
-            for (category in categories) {
-                recipesList.postValue(recipeRepository.getCategoryRecipes(category))
-            }
+//            convertCountry(selectedArea.value.toString())
+
+//            recipesList.postValue(recipeRepository.getCountryRecipes(country))
+//            for (category in categories) {
+//                recipesList.postValue(recipeRepository.getCategoryRecipes(category))
+//            }
         }
+    }
+
+    // only if a filter has been selected do this logic:
+    fun reduceRecipesShown() {
+        // store the what's being returned from the category call into a variable, making it each to
+        // remove when a category is unselected
     }
 }
