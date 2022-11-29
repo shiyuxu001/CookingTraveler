@@ -76,6 +76,8 @@ class MainViewModel : ViewModel() {
                     recipesByCategory.add(recipe)
                 }
             }
+            // object.idMeal <- parsing json object
+            // take intersection between two lists
             // make call to reduce recipes shown ()
             // postValue on recipesList and displayed recipes list
             // ONLY CALL REDUCE RECIPES if categories is not empty

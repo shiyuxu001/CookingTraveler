@@ -33,6 +33,7 @@ class RecipesFragment : Fragment() {
 
     }
 
+    // TODO: look into creating a pop-up when a row is clicked
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

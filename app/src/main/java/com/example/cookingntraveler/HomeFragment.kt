@@ -1,4 +1,5 @@
 package com.example.cookingntraveler
+import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Bundle;
 
@@ -18,14 +19,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import androidx.lifecycle.MutableLiveData
-import com.example.cookingntraveler.databinding.FragmentMapBinding
 
 class HomeFragment : Fragment() {
     private lateinit var _binding : MapFragmentBinding
+//    private lateinit var _binding : View
+
     private val binding get() = _binding!!
-    private val viewModel: MainViewModel by activityViewModels()
 //    private val mainActivity: MainActivity
-    private lateinit var geocoder: Geocoder
+//    private lateinit var geocoder: Geocoder
     private lateinit var selectedArea: MutableLiveData<String>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +34,13 @@ class HomeFragment : Fragment() {
     ): View {
         // Initialize view
 
-        geocoder = Geocoder(this.context)
-        _binding = MapFragmentBinding.inflate(inflater,container,false) //causing error
+//        geocoder = Geocoder(this.context)
+        // approach 1, failed, but has short log
+//        _binding = LayoutInflater.from(container!!.context).inflate(R.layout.map_fragment, container, false)
+
+        // og approach
+        // _binding = MapFragmentBinding.inflate(inflater,container,false) //causing error
+//        }
         selectedArea = MutableLiveData()
         //val view: View = inflater.inflate(, container, false)
 
@@ -64,12 +70,12 @@ class HomeFragment : Fragment() {
                 // Add marker on map
                 googleMap.addMarker(markerOptions)
 
-                selectedArea.value = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
+//                selectedArea.value = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
 
             }
         }
         // Return view
-        return binding.root
+        return binding
     }
 
     fun observeSelectedArea(): MutableLiveData<String> {

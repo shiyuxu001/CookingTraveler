@@ -34,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(activityMainBinding.toolbar)
         binding = activityMainBinding.contentMain
 
+        // TODO: initalize RV, fc 2 reference
         val mapFrag = HomeFragment()
         // TODO: make sure we handle user manually searching a country (must make it in format: Canada ... )
 //        mapFrag.observeSelectedArea().observe(this) {
-//            viewModel.convertCountry(it)
 //            viewModel.netRefresh()
 //            // take into consideration if not a valid country is clicked -> snack bar
 //                // "no recipes found for area" either: give random recipe/ all recipes or nothing
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //open fragment
+        // TODO: stacking fragments FC 3
         getSupportFragmentManager()
             .beginTransaction().replace(binding.mapFL.id,mapFrag)
             .commit()
