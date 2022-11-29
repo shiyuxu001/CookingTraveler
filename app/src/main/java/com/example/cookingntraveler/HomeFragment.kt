@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.example.cookingntraveler.databinding.FragmentMapBinding
@@ -48,6 +49,8 @@ class HomeFragment : Fragment() {
 
             googleMap.setOnMapClickListener { latLng -> // When clicked on map
                 // Initialize marker options
+
+                // Initialize marker options
                 val markerOptions = MarkerOptions()
 
                 // Set position of marker
@@ -55,21 +58,40 @@ class HomeFragment : Fragment() {
 
                 // Remove all marker
                 googleMap.clear()
+                val clicked= geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
 
-                // Animating to zoom the marker
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
 
-                // Add marker on map
-                var countryName = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
-                markerOptions.title("Cooking up some recipes from ${countryName}")
-                googleMap.addMarker(markerOptions)
+//                if(clicked !=null && clicked[0].countryName != null && isValidCountry(clicked[0].countryName)){
+
+                if(clicked !=null && clicked[0].countryName != null ){
+
+                    // Animating to zoom the marker
+                    googleMap.addMarker(markerOptions)
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4f))
+                    markerOptions.title(clicked[0].countryName)
+
+                    //TODO: add a message or smth ?? on the marker
+
+                    //TODO: delay
+
+                    //Switch to new fragment of recipes
+
+                    //TODO:
+                    Log.d("XXX", "Country: ${clicked[0].countryName}")
+                    selectedArea.value = clicked[0].countryName
+                }else{
+                    //not a country
+                    //TODO: crashing !?
+                    Toast.makeText(this.context, "Please click a valid country!",Toast.LENGTH_SHORT)
+
+                }
 
                 googleMap.uiSettings.isZoomControlsEnabled = true
                 googleMap.uiSettings.isZoomGesturesEnabled = true
 
-
-                Log.d("XXX", "Country: ${countryName}")
-                selectedArea.value = countryName
+//
+//                Log.d("XXX", "Country: ${countryName}")
+//                selectedArea.value = countryName
             }
         }
     }
