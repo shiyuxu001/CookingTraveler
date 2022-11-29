@@ -29,16 +29,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Initialize view
-        geocoder = Geocoder(activity, Locale.getDefault()) // TODO: hmmm
-
         // og approach
         _binding = FragmentMapBinding.inflate(inflater, container, false) //causing error
-        selectedArea = MutableLiveData()
 
+        // Return view
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // Initialize map fragment
+        geocoder = Geocoder(context)
+        selectedArea = MutableLiveData()
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
-
         // Async map
         supportMapFragment.getMapAsync { googleMap ->
 
@@ -53,26 +57,26 @@ class HomeFragment : Fragment() {
                 googleMap.clear()
 
                 // Animating to zoom the marker
-                // TODO: dont zoom the camera in this much
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
 
                 // Add marker on map
+                var countryName = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
+                markerOptions.title("Cooking up some recipes from ${countryName}")
                 googleMap.addMarker(markerOptions)
 
                 googleMap.uiSettings.isZoomControlsEnabled = true
                 googleMap.uiSettings.isZoomGesturesEnabled = true
 
-                var countryName = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
-                markerOptions.title(countryName)
+
                 Log.d("XXX", "Country: ${countryName}")
                 selectedArea.value = countryName
             }
         }
-        // Return view
-        return binding.root
     }
 
     fun observeSelectedArea(): MutableLiveData<String> {
+
+
         return selectedArea
     }
 }
