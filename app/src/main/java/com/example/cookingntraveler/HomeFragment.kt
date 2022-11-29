@@ -1,48 +1,39 @@
 package com.example.cookingntraveler
-import android.annotation.SuppressLint
+
 import android.location.Geocoder
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.fragment.app.activityViewModels
-
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.example.cookingntraveler.databinding.FragmentMapBinding
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 class HomeFragment : Fragment() {
-    private lateinit var _binding : FragmentMapBinding
-//    private lateinit var _binding : View
+    private lateinit var _binding: FragmentMapBinding
 
     private val binding get() = _binding!!
-//    private val mainActivity: MainActivity
-//    private lateinit var geocoder: Geocoder
+
+    private lateinit var geocoder: Geocoder
     private lateinit var selectedArea: MutableLiveData<String>
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Initialize view
-
-//        geocoder = Geocoder(this.context)
-        // approach 1, failed, but has short log
-//        _binding = LayoutInflater.from(container!!.context).inflate(R.layout.map_fragment, container, false)
+        geocoder = Geocoder(activity, Locale.getDefault()) // TODO: hmmm
 
         // og approach
-         _binding = FragmentMapBinding.inflate(inflater,container,false) //causing error
-//        }
+        _binding = FragmentMapBinding.inflate(inflater, container, false) //causing error
         selectedArea = MutableLiveData()
-        //val view: View = inflater.inflate(, container, false)
 
         // Initialize map fragment
         val supportMapFragment =
@@ -58,20 +49,23 @@ class HomeFragment : Fragment() {
                 // Set position of marker
                 markerOptions.position(latLng)
 
-                // Set title of marker
-                markerOptions.title(latLng.latitude.toString() + " : " + latLng.longitude)
-
                 // Remove all marker
                 googleMap.clear()
 
                 // Animating to zoom the marker
+                // TODO: dont zoom the camera in this much
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
 
                 // Add marker on map
                 googleMap.addMarker(markerOptions)
 
-//                selectedArea.value = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
+                googleMap.uiSettings.isZoomControlsEnabled = true
+                googleMap.uiSettings.isZoomGesturesEnabled = true
 
+                var countryName = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)[0].countryName
+                markerOptions.title(countryName)
+                Log.d("XXX", "Country: ${countryName}")
+                selectedArea.value = countryName
             }
         }
         // Return view
@@ -81,5 +75,4 @@ class HomeFragment : Fragment() {
     fun observeSelectedArea(): MutableLiveData<String> {
         return selectedArea
     }
-
 }
