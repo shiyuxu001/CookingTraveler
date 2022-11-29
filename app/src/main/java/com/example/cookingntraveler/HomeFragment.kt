@@ -74,9 +74,7 @@ class HomeFragment : Fragment() {
 
                     //TODO: delay
 
-                    //Switch to new fragment of recipes
 
-                    //TODO:
                     Log.d("XXX", "Country: ${clicked[0].countryName}")
                     selectedArea.value = clicked[0].countryName
                 }else{
