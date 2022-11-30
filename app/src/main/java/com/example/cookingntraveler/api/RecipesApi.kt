@@ -12,8 +12,8 @@ import retrofit2.http.Query
 interface RecipesApi {
 
     @GET("filter.php?")
-    suspend fun getCountryRecipes(@Query("a") level: String) : List<FilterRecipe>
-    suspend fun getCategoryRecipes(@Query("c") category: String): List<FilterRecipe>
+    suspend fun getCountryRecipes(@Query("a") level: String) : FilterRecipes
+    suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipes
 
     @GET("lookup.php")
     suspend fun getRecipe(@Query("i") mealId: Int) : Recipe
@@ -39,6 +39,8 @@ interface RecipesApi {
                 .build()
             return rf.create(RecipesApi ::class.java)
         }
+
+
 //        private fun create(httpUrl: HttpUrl): RecipesApi {
 //            val client = OkHttpClient.Builder()
 //                .addInterceptor(HttpLoggingInterceptor().apply {

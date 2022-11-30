@@ -25,7 +25,7 @@ class RecipesFragment() : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private var categories = MutableLiveData<List<String>>().default(emptyList())
+    private var categories = MutableLiveData<MutableList<String>>().default(arrayListOf())
     private val viewModel: MainViewModel by activityViewModels()
 
     private lateinit var listAdapter:RecipeRVAdapter
@@ -50,8 +50,8 @@ class RecipesFragment() : Fragment() {
         listAdapter.submitList(viewModel.observeDisplayedList().value)
 
         binding.backButton.setOnClickListener {
-//            parentFragmentManager.popBackStack() //will exit the app??
-
+            // TODO: how to pop off stack and return to exploring map?
+            activity?.supportFragmentManager?.popBackStack()
         }
 
         viewModel.observeDisplayedList().observe(viewLifecycleOwner) {
@@ -66,13 +66,10 @@ class RecipesFragment() : Fragment() {
         _binding = null
     }
 
-    fun observeCategories(): MutableLiveData<List<String>> {
+    fun observeCategories(): MutableLiveData<MutableList<String>> {
         return categories
     }
 
-
-
-    // TODO: when back is pressed getActivity().getFragmentManager().popBackStack();
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
 
 }

@@ -23,10 +23,8 @@ class RecipeRVAdapter(context: Context)
             init {
                 recipeRowBinding.root.setOnClickListener{
                     //to go pop up/overlay fragment w full recipe
+                    // clickListener(songRowBinding.root.rootView , songRowBinding.songTitle.text.toString())
                 }
-//            songRowBinding.root.setOnClickListener {
-//                clickListener(songRowBinding.root.rootView , songRowBinding.songTitle.text.toString())
-//            }
             }
         }
 

@@ -1,5 +1,6 @@
 package com.example.cookingntraveler
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,8 +8,11 @@ import com.example.cookingntraveler.api.FilterRecipe
 import com.example.cookingntraveler.api.Recipe
 import com.example.cookingntraveler.api.RecipeRepository
 import com.example.cookingntraveler.api.RecipesApi
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONException
+import org.json.JSONObject
 
 class MainViewModel : ViewModel() {
     // XXX You need some important member variables
@@ -22,23 +26,13 @@ class MainViewModel : ViewModel() {
     private val displayedList = MutableLiveData<List<FilterRecipe>>()
     //returned by API calls
     private var recipesByCountry = mutableListOf<FilterRecipe>()
-    private var recipesByCategory = mutableListOf<FilterRecipe>()
-    var fetchDone : MutableLiveData<Boolean> = MutableLiveData(false)
-
-
-//    init {
-////        netCountry("Starting")
-//    }
-
 
     fun convertCountry(area: String) : String {
-
-//        var capWord = area.lowercase()
-//        capWord.replaceFirstChar { capWord[0].uppercase() } //?
+        Log.d("XXX", "Entered Country: ${area}")
         country = when(area) {
             // Sanitize input
             "Japan" -> "Japanese"
-            "United States of America" -> "American"
+            "United States" -> "American"
             "America" -> "American"
             "US" -> "American"
             "Canada" -> "Canadian"
@@ -75,9 +69,12 @@ class MainViewModel : ViewModel() {
     fun netCountry(selectedCountry : String) {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            val areaList = recipeRepository.getCountryRecipes(selectedCountry)
-            for (recipe in areaList) {
-                recipesByCountry.add(recipe)
+            val areaList = recipeRepository.getCountryRecipes(selectedCountry).meals
+            Log.d("XXX", "List of recipes for ${selectedCountry}: ${areaList}")
+            if (areaList != null) {
+                for (recipe in areaList) {
+                    recipesByCountry.add(recipe)
+                }
             }
 
             displayedList.postValue(recipesByCountry)
@@ -91,17 +88,26 @@ class MainViewModel : ViewModel() {
 
             processingList.clear()
             for(filter in filters) {
-                val categoryRecipes = recipeRepository.getCategoryRecipes(filter)
-                for(recipe in categoryRecipes) {
-                    //if its in country list, keep
-                    if(isInCategory(recipe)){
-                        processingList.add(recipe)
+                val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
+                if (categoryRecipes != null) {
+                    for(recipe in categoryRecipes) {
+                        //if its in country list, keep
+                        if(isInCategory(recipe)){
+                            processingList.add(recipe)
+                        }
                     }
                 }
             }
-
             displayedList.postValue(processingList)
+        }
+    }
 
+    fun netRandomRecipe() {
+        viewModelScope.launch (
+            context = viewModelScope.coroutineContext + Dispatchers.IO) {
+
+            val random = recipeRepository.getRandomRecipe()
+            // TODO, align with design of showing a single recipe
         }
     }
 

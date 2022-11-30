@@ -2,6 +2,7 @@ package com.example.cookingntraveler
 
 import android.R
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -46,6 +47,10 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             .addToBackStack(null)
             .commit()
 
+        binding.random.setOnClickListener {
+            viewModel.netRandomRecipe()
+        }
+
         // TODO: clean home fragment binding look & structure
         binding.completeSearchBut.setOnClickListener{
             val inputtedVal = binding.inputET.text.toString()
@@ -66,12 +71,9 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 //                loadingAnimation.stopAnimation(activityMainBinding.root) //?? umm
 //                //then fragment replace thing: recipesFrag into here
 
-
                 supportFragmentManager.beginTransaction()
-
                     .replace(binding.mapFL.id, recipeFrag)
                     .commit()
-
             }
         }
 
@@ -82,10 +84,15 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             if (!it.equals("Starting")) {
                 val countryEntered = viewModel.convertCountry(it)
                 if (countryEntered.equals("None")) {
+                    Log.d("XXX", "No recipes found")
+
                     Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
                 } else {
                     viewModel.netCountry(countryEntered)
-
+                    Log.d("XXX", "Country Network call in process")
+                    supportFragmentManager.beginTransaction()
+                        .replace(binding.mapFL.id, recipeFrag)
+                        .commit()
                 }
             }
         }
@@ -101,7 +108,7 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         recipeFrag.observeCategories().observe(this) {
             // view model functions ...
-//            viewModel.netRefresh() // ... TODO: view model functions to call
+            viewModel.netFilterCategory(it) // ... TODO: view model functions to call
         }
 
     }
