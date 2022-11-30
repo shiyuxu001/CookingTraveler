@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
     private val recipeTitle = "Recipe"
-    private val mapTitle = "Map"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,15 +36,28 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: initalize RV, fc 2 reference
         val mapFrag = HomeFragment()
-        // TODO: make sure we handle user manually searching a country (must make it in format: Canada ... )
+
+        //open fragment
+        // TODO: IMPORTANT update layouts properly or else app won't start
+        getSupportFragmentManager()
+            .beginTransaction().replace(binding.mapFL.id,mapFrag)
+            .addToBackStack(null)
+            .commit()
+
+        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
+
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
-
+                // view model functions ...
 //                viewModel.netRefresh()
-                // take into consideration if not a valid country is clicked -> snack bar
-                // "no recipes found for area" either: give random recipe/ all recipes or nothing
-                // try to see if google maps api has "nearby countries"; continental food
-                // logic ... api call?
+                // depending on what the view model returns
+                // if no recipes for this country -> make toast, ask for them to enter new country
+                // else replace fragment to be recipes something like:
+//                getSupportFragmentManager()
+//                    .beginTransaction().replace(binding.mapFL.id, )
+//                    .commit()
+
+//            }
             }
         }
         mapFrag.observeClickIndicator().observe(this) {
@@ -55,18 +67,11 @@ class MainActivity : AppCompatActivity() {
             mapFrag.resetInvalidCountryClickIndicator()
         }
 
-        //open fragment
-        getSupportFragmentManager()
-            .beginTransaction().replace(binding.mapFL.id,mapFrag)
-            .addToBackStack(null)
-            .commit()
 
-        val recipeFrag = RecipesFragment()
-//        recipeFrag.observeCategories().observe(this) {
-//            viewModel.netRefresh() // ... find out the call
-//        }
-
-
+        recipeFrag.observeCategories().observe(this) {
+            // view model functions ...
+//            viewModel.netRefresh() // ... TODO: view model functions to call
+        }
 
     }
 }
