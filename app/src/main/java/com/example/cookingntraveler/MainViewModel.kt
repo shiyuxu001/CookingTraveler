@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cookingntraveler.api.FilterRecipe
+import com.example.cookingntraveler.api.Recipe
 import com.example.cookingntraveler.api.RecipeRepository
 import com.example.cookingntraveler.api.RecipesApi
 import kotlinx.coroutines.Dispatchers
@@ -12,15 +13,22 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     // XXX You need some important member variables
     private var country = "American" //TODO : hmmm
-    private var categories = listOf<String>()
+
     private val recipeApi = RecipesApi.create()
     private val recipeRepository = RecipeRepository(recipeApi)
-    private val recipesList = MutableLiveData<List<FilterRecipe>>()
-    private val displayedList = MutableLiveData<List<FilterRecipe>>()
+
     private val selectedArea = MutableLiveData<String>()
+
+
+    private var processingList = mutableListOf<FilterRecipe>()
+    //list that is displayed;
+    private val displayedList = MutableLiveData<List<FilterRecipe>>()
+    //returned by API calls
     private var recipesByCountry = mutableListOf<FilterRecipe>()
     private var recipesByCategory = mutableListOf<FilterRecipe>()
     var fetchDone : MutableLiveData<Boolean> = MutableLiveData(false)
+
+
     init {
         netRefresh()
     }
@@ -62,6 +70,7 @@ class MainViewModel : ViewModel() {
         return country
     }
 
+    //to fetch country list
     fun netRefresh() {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -70,24 +79,42 @@ class MainViewModel : ViewModel() {
             for (recipe in areaList) {
                 recipesByCountry.add(recipe)
             }
-            for (category in categories) {
-               val categoryList = recipeRepository.getCategoryRecipes(category)
-                for (recipe in categoryList) {
-                    recipesByCategory.add(recipe)
+
+            displayedList.postValue(recipesByCategory)
+        }
+    }
+
+    //to filter the recipes displayed when filtering
+    fun netFilterCategory(filters: MutableList<String>){
+        viewModelScope.launch (
+            context = viewModelScope.coroutineContext + Dispatchers.IO) {
+
+            processingList.clear()
+            for(filter in filters) {
+                val categoryRecipes = recipeRepository.getCategoryRecipes(filter)
+                for(recipe in categoryRecipes) {
+                    //if its in country list, keep
+                    if(isInCategory(recipe)){
+                        processingList.add(recipe)
+                    }
                 }
             }
-            // object.idMeal <- parsing json object
-            // take intersection between two lists
-            // make call to reduce recipes shown ()
-            // postValue on recipesList and displayed recipes list
-            // ONLY CALL REDUCE RECIPES if categories is not empty
+
+            displayedList.postValue(processingList)
 
         }
     }
 
-    // only if a filter has been selected do this logic:
-    fun reduceRecipesShown() {
-        // using recipes by category and recipes by Country, do cross referencing, this function reduceRecipesShow()
-        // is a helper method for net refresh
+
+
+    //checks if this recipe is in the country list
+    private fun isInCategory(catRec: FilterRecipe): Boolean {
+        for(couRec in recipesByCountry){
+            if(couRec.idMeal == catRec.idMeal){
+                return true;
+            }
+        }
+        return false
     }
+
 }
