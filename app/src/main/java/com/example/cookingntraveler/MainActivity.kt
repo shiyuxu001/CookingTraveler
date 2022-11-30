@@ -2,21 +2,14 @@ package com.example.cookingntraveler
 
 import android.R
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.example.cookingntraveler.databinding.ActivityMainBinding
 import com.example.cookingntraveler.databinding.ContentMainBinding
-import com.google.android.gms.maps.MapFragment
-import java.lang.reflect.Array.newInstance
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,12 +37,35 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .commit()
 
-        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
+        // TODO: clean home fragment binding look & structure
+        binding.completeSearchBut.setOnClickListener{
+            val inputtedVal = binding.inputET.text.toString()
+            val countryEntered = viewModel.convertCountry(inputtedVal)
+            if (inputtedVal.isEmpty()) {
+                Toast.makeText(this, "Please enter a country name!", Toast.LENGTH_SHORT).show()
+            }
+            if (countryEntered.equals("None")) {
+                Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.netCountry(countryEntered)
+            }
+        }
 
+        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
+        viewModel.observeDisplayedList().observe(this) {
+
+        }
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
+                val countryEntered = viewModel.convertCountry(it)
+                if (countryEntered.equals("None")) {
+                    Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.netCountry(countryEntered)
+
+
+                }
                 // view model functions ...
-//                viewModel.netRefresh()
                 // depending on what the view model returns
                 // if no recipes for this country -> make toast, ask for them to enter new country
                 // else replace fragment to be recipes something like:
@@ -60,6 +76,8 @@ class MainActivity : AppCompatActivity() {
 //            }
             }
         }
+
+
         mapFrag.observeClickIndicator().observe(this) {
             if (it) {
                 Toast.makeText(this, "Please click a valid country!",Toast.LENGTH_SHORT)

@@ -12,13 +12,10 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     // XXX You need some important member variables
-    private var country = "American" //TODO : hmmm
+    private var country = "None" //TODO : hmmm
 
     private val recipeApi = RecipesApi.create()
     private val recipeRepository = RecipeRepository(recipeApi)
-
-    private val selectedArea = MutableLiveData<String>()
-
 
     private var processingList = mutableListOf<FilterRecipe>()
     //list that is displayed;
@@ -29,9 +26,9 @@ class MainViewModel : ViewModel() {
     var fetchDone : MutableLiveData<Boolean> = MutableLiveData(false)
 
 
-    init {
-        netCountry()
-    }
+//    init {
+////        netCountry("Starting")
+//    }
 
 
     fun convertCountry(area: String) : String {
@@ -71,11 +68,10 @@ class MainViewModel : ViewModel() {
     }
 
     //to fetch country list
-    fun netCountry() {
+    fun netCountry(selectedCountry : String) {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            convertCountry(selectedArea.value.toString())
-            val areaList = recipeRepository.getCountryRecipes(country)
+            val areaList = recipeRepository.getCountryRecipes(selectedCountry)
             for (recipe in areaList) {
                 recipesByCountry.add(recipe)
             }
@@ -105,6 +101,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun observeDisplayedList(): MutableLiveData<List<FilterRecipe>> {
+        return displayedList
+    }
 
 
     //checks if this recipe is in the country list
