@@ -7,6 +7,38 @@
     android:layout_margin="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <ImageView
+        android:id="@+id/worldIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="top"
+
+        android:src="@drawable/world"
+        android:textColorHint="#89c3c3c3"
+        android:textSize="24sp"
+        android:autofillHints=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/inputET"
+        app:layout_constraintBottom_toBottomOf="@id/inputET"
+        app:layout_constraintTop_toTopOf="@id/inputET"
+        />
+
+    <EditText
+        android:id="@+id/inputET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="Enter in a Country                         "
+        android:inputType="textCapSentences"
+        android:maxLines="1"
+        android:textColorHint="#89c3c3c3"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/worldIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <ImageView
         android:id="@+id/random"
@@ -22,6 +54,7 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         app:layout_constraintBottom_toTopOf="@id/random"
+        app:layout_constraintTop_toBottomOf="@id/worldIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/mapFL"/>
