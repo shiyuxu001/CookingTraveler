@@ -1,19 +1,21 @@
 package com.example.cookingntraveler
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.DialogInterface.OnMultiChoiceClickListener
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.cookingntraveler.api.FilterRecipe
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cookingntraveler.databinding.RecipesFragmentBinding
-import com.google.android.gms.maps.SupportMapFragment
+import java.util.*
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -25,10 +27,13 @@ class RecipesFragment() : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private var categories = MutableLiveData<MutableList<String>>().default(arrayListOf())
     private val viewModel: MainViewModel by activityViewModels()
+    //    )
+    var selectedCategories: MutableList<String> = arrayListOf()
+
 
     private lateinit var listAdapter:RecipeRVAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +53,74 @@ class RecipesFragment() : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(binding.recyclerView.context)
         binding.recyclerView.adapter = listAdapter
         listAdapter.submitList(viewModel.observeDisplayedList().value)
+        initRecyclerViewDividers(binding.recyclerView)
+
+        viewModel.observeCategoryList().observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                val filterOptions = it.toMutableList()
+                val selectedCategory = BooleanArray(filterOptions.size)
+                val categoryList = ArrayList<Int>()
+                binding.categoryFilterDropDown.setOnClickListener {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+                    // set title
+                    builder.setTitle("Filter recipes")
+
+                    // set dialog non cancelable
+                    builder.setCancelable(false)
+                    builder.setMultiChoiceItems(filterOptions.toTypedArray(), selectedCategory) {
+                         dialogInterface, i, b ->
+                            // check condition
+                            if (b) {
+                                // when checkbox selected add position in list
+                                categoryList.add(i)
+                                // Sort array list
+                                Collections.sort(categoryList)
+                            } else {
+                                // when checkbox unselected list
+                                categoryList.remove(Integer.valueOf(i))
+                            }
+                        }
+                    builder.setPositiveButton("OK",
+                        DialogInterface.OnClickListener { dialogInterface, i -> // Initialize string builder
+                            val stringBuilder = StringBuilder()
+                            selectedCategories.clear()
+                            // use for loop
+                            for (j in 0 until categoryList.size) {
+                                // concat array value
+                                stringBuilder.append(filterOptions[categoryList[j]])
+                                selectedCategories.add(filterOptions[categoryList[j]])
+                                // check condition
+                                if (j != (categoryList.size - 1)) {
+                                    stringBuilder.append(", ")
+                                }
+                            }
+                            // set text on textView
+                            binding.categoryFilterDropDown.text = stringBuilder.toString()
+                            viewModel.netFilterCategory(selectedCategories)
+                        })
+                    builder.setNegativeButton("Cancel",
+                        DialogInterface.OnClickListener { dialogInterface, i -> // dismiss dialog
+                            dialogInterface.dismiss()
+                        })
+                    builder.setNeutralButton("Clear All",
+                        DialogInterface.OnClickListener { dialogInterface, i ->
+                            // use for loop
+                            for (j in selectedCategory.indices) {
+                                // remove all selection
+                                selectedCategory[j] = false
+                                // clear language list
+                                categoryList.clear()
+                                // clear text view value
+                                binding.categoryFilterDropDown.text = ""
+                            }
+                        })
+                    // show dialog
+                    builder.show()
+                }
+            }
+        }
+
+
 
         binding.backButton.setOnClickListener {
             // TODO: how to pop off stack and return to exploring map?
@@ -65,11 +138,13 @@ class RecipesFragment() : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    fun observeCategories(): MutableLiveData<MutableList<String>> {
-        return categories
-    }
-
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
 
+}
+
+private fun initRecyclerViewDividers(rv: RecyclerView) {
+    // Let's have dividers between list items
+    val dividerItemDecoration = DividerItemDecoration(
+        rv.context, LinearLayoutManager.VERTICAL )
+    rv.addItemDecoration(dividerItemDecoration)
 }

@@ -4,15 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cookingntraveler.api.FilterRecipe
-import com.example.cookingntraveler.api.Recipe
-import com.example.cookingntraveler.api.RecipeRepository
-import com.example.cookingntraveler.api.RecipesApi
-import com.google.gson.Gson
+import com.example.cookingntraveler.api.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONException
-import org.json.JSONObject
 
 class MainViewModel : ViewModel() {
     // XXX You need some important member variables
@@ -24,6 +18,7 @@ class MainViewModel : ViewModel() {
     private var processingList = mutableListOf<FilterRecipe>()
     //list that is displayed;
     private val displayedList = MutableLiveData<List<FilterRecipe>>()
+    private val categoryList = MutableLiveData<List<String>>()
     //returned by API calls
     private var recipesByCountry = mutableListOf<FilterRecipe>()
 
@@ -111,11 +106,27 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun netRetrieveCategories(){
+        viewModelScope.launch (
+            context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            val categories = recipeRepository.getAllCategories().categories
+            val allCategories = mutableListOf<String>()
+            if (categories != null) {
+                for (category in categories) {
+                    allCategories.add(category.strCategory)
+                }
+                categoryList.postValue(allCategories.toList())
+            }
+        }
+    }
+
     fun observeDisplayedList(): MutableLiveData<List<FilterRecipe>> {
         return displayedList
     }
 
-
+    fun observeCategoryList(): MutableLiveData<List<String>> {
+        return categoryList
+    }
 
     //checks if this recipe is in the country list
     private fun isInCategory(catRec: FilterRecipe): Boolean {

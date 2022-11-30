@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
     private lateinit var _binding : ContentMainBinding
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
-    private val recipeTitle = "Recipe"
     private lateinit var activityMainBinding : ActivityMainBinding
 
     //for loading animation
@@ -35,13 +34,13 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
 
 
-        // TODO: initalize RV, fc 2 reference
+        viewModel.netRetrieveCategories()
+
         val mapFrag = HomeFragment()
-        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
+        val recipeFrag = RecipesFragment()
 
 
         //open fragment
-        // TODO: IMPORTANT update layouts properly or else app won't start
         getSupportFragmentManager()
             .beginTransaction().replace(binding.mapFL.id,mapFrag)
             .addToBackStack(null)
@@ -63,7 +62,8 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
                 Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
             } else {
                 viewModel.netCountry(countryEntered)
-//
+                viewModel.netRetrieveCategories()
+
 //                //added loading animation
 //                loadingAnimation = LoadingAnimation(this, "lottie_plane_anim.json")
 //                loadingAnimation.playAnimation(true)
@@ -77,8 +77,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             }
         }
 
-        //search/back button um
-
 
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
@@ -89,7 +87,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
                     Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
                 } else {
                     viewModel.netCountry(countryEntered)
-                    Log.d("XXX", "Country Network call in process")
                     supportFragmentManager.beginTransaction()
                         .replace(binding.mapFL.id, recipeFrag)
                         .commit()
@@ -105,17 +102,10 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             mapFrag.resetInvalidCountryClickIndicator()
         }
 
-
-        recipeFrag.observeCategories().observe(this) {
-            // view model functions ...
-            viewModel.netFilterCategory(it) // ... TODO: view model functions to call
-        }
-
     }
 
     override fun onFinishedLoading() {
         loadingAnimation.stopAnimation(activityMainBinding.root) //?
     }
-
 
 }

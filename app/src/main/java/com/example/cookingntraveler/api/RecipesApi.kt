@@ -13,10 +13,15 @@ interface RecipesApi {
 
     @GET("filter.php?")
     suspend fun getCountryRecipes(@Query("a") level: String) : FilterRecipes
+
+    @GET("filter.php?")
     suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipes
 
     @GET("lookup.php")
     suspend fun getRecipe(@Query("i") mealId: Int) : Recipe
+
+    @GET("categories.php")
+    suspend fun getAllCategories() : Categories
 
     @GET("random.php")
     suspend fun getRandomRecipe() :Recipe
