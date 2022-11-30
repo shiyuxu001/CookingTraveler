@@ -96,7 +96,7 @@ class RecipesFragment() : Fragment() {
                             }
                             // set text on textView
                             binding.categoryFilterDropDown.text = stringBuilder.toString()
-                            viewModel.netFilterCategory(selectedCategories)
+                            viewModel.netFilterCategory(selectedCategories, reset = true, filterOptions)
                         })
                     builder.setNegativeButton("Cancel",
                         DialogInterface.OnClickListener { dialogInterface, i -> // dismiss dialog
@@ -110,8 +110,10 @@ class RecipesFragment() : Fragment() {
                                 selectedCategory[j] = false
                                 // clear language list
                                 categoryList.clear()
+
+                                viewModel.netFilterCategory(filterOptions, reset = true, filterOptions)
                                 // clear text view value
-                                binding.categoryFilterDropDown.text = ""
+                                binding.categoryFilterDropDown.text = "Filter Recipes"
                             }
                         })
                     // show dialog

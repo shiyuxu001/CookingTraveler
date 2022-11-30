@@ -77,24 +77,50 @@ class MainViewModel : ViewModel() {
     }
 
     //to filter the recipes displayed when filtering
-    fun netFilterCategory(filters: MutableList<String>){
-        viewModelScope.launch (
-            context = viewModelScope.coroutineContext + Dispatchers.IO) {
+    fun netFilterCategory(filters: MutableList<String>, reset: Boolean, fullFilterList: MutableList<String>?) {
+        viewModelScope.launch(
+            context = viewModelScope.coroutineContext + Dispatchers.IO
+        ) {
 
             processingList.clear()
-            for(filter in filters) {
-                val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
-                if (categoryRecipes != null) {
-                    for(recipe in categoryRecipes) {
-                        //if its in country list, keep
-                        if(isInCategory(recipe)){
+            if (reset) {
+                for (filter in fullFilterList!!) {
+                    val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
+                    if (categoryRecipes != null) {
+                        for (recipe in categoryRecipes) {
                             processingList.add(recipe)
                         }
                     }
                 }
+
+                for (filter in filters) {
+                    val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
+                    if (categoryRecipes != null) {
+                        for (recipe in categoryRecipes) {
+                            //if its in country list, keep
+                            if (!isInCategory(recipe)) {
+                                processingList.remove(recipe)
+                            }
+                        }
+                    }
+                }
+
+
+            } else {
+                for (filter in filters) {
+                    val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
+                    if (categoryRecipes != null) {
+                        for (recipe in categoryRecipes) {
+                            //if its in country list, keep
+                            if (isInCategory(recipe)) {
+                                processingList.add(recipe)
+                            }
+                        }
+                    }
+                }
             }
-            displayedList.postValue(processingList)
-        }
+                displayedList.postValue(processingList)
+            }
     }
 
     fun netRandomRecipe() {

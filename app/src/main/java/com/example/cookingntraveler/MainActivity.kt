@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
         _binding = activityMainBinding.contentMain
 
 
-
         viewModel.netRetrieveCategories()
 
         val mapFrag = HomeFragment()
