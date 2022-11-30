@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
 
 
     init {
-        netRefresh()
+        netCountry()
     }
 
 
@@ -71,7 +71,7 @@ class MainViewModel : ViewModel() {
     }
 
     //to fetch country list
-    fun netRefresh() {
+    fun netCountry() {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
             convertCountry(selectedArea.value.toString())
@@ -80,7 +80,7 @@ class MainViewModel : ViewModel() {
                 recipesByCountry.add(recipe)
             }
 
-            displayedList.postValue(recipesByCategory)
+            displayedList.postValue(recipesByCountry)
         }
     }
 
