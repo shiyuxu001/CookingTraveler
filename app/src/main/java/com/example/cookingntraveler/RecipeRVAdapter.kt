@@ -21,7 +21,9 @@ class RecipeRVAdapter(context: Context)
         inner class ViewHolder(val recipeRowBinding : RowBinding)
         : RecyclerView.ViewHolder(recipeRowBinding.root) {
             init {
-                // TODO:
+                recipeRowBinding.root.setOnClickListener{
+                    //to go pop up/overlay fragment w full recipe
+                }
 //            songRowBinding.root.setOnClickListener {
 //                clickListener(songRowBinding.root.rootView , songRowBinding.songTitle.text.toString())
 //            }

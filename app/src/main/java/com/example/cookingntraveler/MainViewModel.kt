@@ -33,10 +33,14 @@ class MainViewModel : ViewModel() {
 
     fun convertCountry(area: String) : String {
 
+//        var capWord = area.lowercase()
+//        capWord.replaceFirstChar { capWord[0].uppercase() } //?
         country = when(area) {
             // Sanitize input
             "Japan" -> "Japanese"
             "United States of America" -> "American"
+            "America" -> "American"
+            "US" -> "American"
             "Canada" -> "Canadian"
             "United Kingdom" -> "British"
             "China" -> "Chinese"
@@ -104,6 +108,7 @@ class MainViewModel : ViewModel() {
     fun observeDisplayedList(): MutableLiveData<List<FilterRecipe>> {
         return displayedList
     }
+
 
 
     //checks if this recipe is in the country list

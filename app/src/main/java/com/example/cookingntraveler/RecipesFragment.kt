@@ -5,14 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cookingntraveler.api.FilterRecipe
 import com.example.cookingntraveler.databinding.RecipesFragmentBinding
+import com.google.android.gms.maps.SupportMapFragment
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class RecipesFragment : Fragment() {
+class RecipesFragment() : Fragment() {
 
     private var _binding: RecipesFragmentBinding? = null
 
@@ -20,24 +26,38 @@ class RecipesFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private var categories = MutableLiveData<List<String>>().default(emptyList())
+    private val viewModel: MainViewModel by activityViewModels()
+
+    private lateinit var listAdapter:RecipeRVAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        listAdapter = RecipeRVAdapter(this.requireContext())
 
         _binding = RecipesFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-        // TODO: initialize recycler view
 
+
+        return binding.root
     }
 
     // TODO: look into creating a pop-up when a row is clicked
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.recyclerView.layoutManager = LinearLayoutManager(binding.recyclerView.context)
+        binding.recyclerView.adapter = listAdapter
+        listAdapter.submitList(viewModel.observeDisplayedList().value)
+
+        binding.backButton.setOnClickListener {
+//            parentFragmentManager.popBackStack() //will exit the app??
+
+        }
+
+        viewModel.observeDisplayedList().observe(viewLifecycleOwner) {
+            //list to be displayed is changed
+            listAdapter.submitList(it)
+            listAdapter.notifyDataSetChanged()
         }
     }
 
@@ -49,6 +69,8 @@ class RecipesFragment : Fragment() {
     fun observeCategories(): MutableLiveData<List<String>> {
         return categories
     }
+
+
 
     // TODO: when back is pressed getActivity().getFragmentManager().popBackStack();
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }

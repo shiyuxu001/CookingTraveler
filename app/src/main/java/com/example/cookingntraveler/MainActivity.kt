@@ -12,23 +12,32 @@ import com.example.cookingntraveler.databinding.ActivityMainBinding
 import com.example.cookingntraveler.databinding.ContentMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LoadingImplementation {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var _binding : ContentMainBinding
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
     private val recipeTitle = "Recipe"
+    private lateinit var activityMainBinding : ActivityMainBinding
+
+    //for loading animation
+    private lateinit var loadingAnimation : LoadingAnimation
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
         setSupportActionBar(activityMainBinding.toolbar)
         _binding = activityMainBinding.contentMain
 
+
+
         // TODO: initalize RV, fc 2 reference
         val mapFrag = HomeFragment()
+        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
+
 
         //open fragment
         // TODO: IMPORTANT update layouts properly or else app won't start
@@ -40,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         // TODO: clean home fragment binding look & structure
         binding.completeSearchBut.setOnClickListener{
             val inputtedVal = binding.inputET.text.toString()
+            binding.inputET.text.clear()
             val countryEntered = viewModel.convertCountry(inputtedVal)
             if (inputtedVal.isEmpty()) {
                 Toast.makeText(this, "Please enter a country name!", Toast.LENGTH_SHORT).show()
@@ -48,13 +58,26 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
             } else {
                 viewModel.netCountry(countryEntered)
+//
+//                //added loading animation
+//                loadingAnimation = LoadingAnimation(this, "lottie_plane_anim.json")
+//                loadingAnimation.playAnimation(true)
+////                LoadingAsync(this).execute()
+//                loadingAnimation.stopAnimation(activityMainBinding.root) //?? umm
+//                //then fragment replace thing: recipesFrag into here
+
+
+                supportFragmentManager.beginTransaction()
+
+                    .replace(binding.mapFL.id, recipeFrag)
+                    .commit()
+
             }
         }
 
-        val recipeFrag = RecipesFragment() // TODO: need to create on click function to pass in + RV
-        viewModel.observeDisplayedList().observe(this) {
+        //search/back button um
 
-        }
+
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
                 val countryEntered = viewModel.convertCountry(it)
@@ -63,17 +86,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     viewModel.netCountry(countryEntered)
 
-
                 }
-                // view model functions ...
-                // depending on what the view model returns
-                // if no recipes for this country -> make toast, ask for them to enter new country
-                // else replace fragment to be recipes something like:
-//                getSupportFragmentManager()
-//                    .beginTransaction().replace(binding.mapFL.id, )
-//                    .commit()
-
-//            }
             }
         }
 
@@ -92,4 +105,10 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onFinishedLoading() {
+        loadingAnimation.stopAnimation(activityMainBinding.root) //?
+    }
+
+
 }
