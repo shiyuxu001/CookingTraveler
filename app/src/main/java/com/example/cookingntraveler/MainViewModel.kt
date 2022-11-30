@@ -81,7 +81,6 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(
             context = viewModelScope.coroutineContext + Dispatchers.IO
         ) {
-
             processingList.clear()
             if (reset) {
                 for (filter in fullFilterList!!) {
@@ -104,8 +103,6 @@ class MainViewModel : ViewModel() {
                         }
                     }
                 }
-
-
             } else {
                 for (filter in filters) {
                     val categoryRecipes = recipeRepository.getCategoryRecipes(filter).meals
