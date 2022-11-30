@@ -19,8 +19,7 @@ class RecipesFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var categories: MutableLiveData<List<String>>
-
+    private var categories = MutableLiveData<List<String>>().default(emptyList())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,4 +49,8 @@ class RecipesFragment : Fragment() {
     fun observeCategories(): MutableLiveData<List<String>> {
         return categories
     }
+
+    // TODO: when back is pressed getActivity().getFragmentManager().popBackStack();
+    fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
+
 }

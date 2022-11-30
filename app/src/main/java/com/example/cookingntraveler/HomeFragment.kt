@@ -22,7 +22,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var geocoder: Geocoder
-    private lateinit var selectedArea: MutableLiveData<String>
+    private var selectedArea = MutableLiveData<String>().default("Starting")
+    private var invalidCountryClickIndicator = MutableLiveData<Boolean>().default(false)
 
 
     override fun onCreateView(
@@ -41,7 +42,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize map fragment
         geocoder = Geocoder(context)
-        selectedArea = MutableLiveData()
+
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         // Async map
@@ -60,43 +61,40 @@ class HomeFragment : Fragment() {
                 googleMap.clear()
                 val clicked= geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
 
-
-//                if(clicked !=null && clicked[0].countryName != null && isValidCountry(clicked[0].countryName)){
-
-                if(clicked !=null && clicked[0].countryName != null ){
+                if(clicked !=null && clicked.size > 0 && clicked[0].countryName != null){
 
                     // Animating to zoom the marker
                     googleMap.addMarker(markerOptions)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4f))
                     markerOptions.title(clicked[0].countryName)
 
-                    //TODO: add a message or smth ?? on the marker
-
-                    //TODO: delay
-
-
                     Log.d("XXX", "Country: ${clicked[0].countryName}")
                     selectedArea.value = clicked[0].countryName
                 }else{
                     //not a country
-                    //TODO: crashing !?
-                    Toast.makeText(this.context, "Please click a valid country!",Toast.LENGTH_SHORT)
+                    invalidCountryClickIndicator.value = true
+                    // tells main acitivity to make the toast
 
                 }
 
                 googleMap.uiSettings.isZoomControlsEnabled = true
                 googleMap.uiSettings.isZoomGesturesEnabled = true
-
-//
-//                Log.d("XXX", "Country: ${countryName}")
-//                selectedArea.value = countryName
             }
         }
     }
 
+    fun resetInvalidCountryClickIndicator() {
+        invalidCountryClickIndicator = MutableLiveData<Boolean>().default(false)
+    }
+
     fun observeSelectedArea(): MutableLiveData<String> {
-
-
         return selectedArea
     }
+
+    fun observeClickIndicator(): MutableLiveData<Boolean> {
+        return invalidCountryClickIndicator
+    }
+
+    fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
+
 }
