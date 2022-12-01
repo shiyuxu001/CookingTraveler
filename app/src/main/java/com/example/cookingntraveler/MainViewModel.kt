@@ -64,6 +64,7 @@ class MainViewModel : ViewModel() {
     fun netCountry(selectedCountry : String) {
         viewModelScope.launch (
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            recipesByCountry.clear()
             val areaList = recipeRepository.getCountryRecipes(selectedCountry).meals
             Log.d("XXX", "List of recipes for ${selectedCountry}: ${areaList}")
             if (areaList != null) {

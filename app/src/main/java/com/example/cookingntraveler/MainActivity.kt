@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
         //open fragment
         getSupportFragmentManager()
             .beginTransaction().replace(binding.mapFL.id,mapFrag)
-            .addToBackStack(null)
             .commit()
 
         binding.random.setOnClickListener {
@@ -107,10 +106,10 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         recipeFrag.observerBackButtonPushed().observe(this) {
             if(it) {
+                Log.d("XXX", "true")
                 supportFragmentManager.beginTransaction()
-                    .replace(binding.mapFL.id, recipeFrag)
+                    .replace(binding.mapFL.id, mapFrag)
                     .commit()
-                recipeFrag.resetBackButton()
             }
 
         }

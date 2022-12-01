@@ -3,6 +3,7 @@ package com.example.cookingntraveler
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,7 @@ class RecipesFragment() : Fragment() {
         initRecyclerViewDividers(binding.recyclerView)
 
         binding.backButton.setOnClickListener {
+            Log.d("XXX", "BUTTON PRESS REGISTERED")
             backButtonPressed.value = true
         }
 
@@ -132,7 +134,6 @@ class RecipesFragment() : Fragment() {
         }
 
         viewModel.observeDisplayedList().observe(viewLifecycleOwner) {
-//            if ()
             //list to be displayed is changed
             listAdapter.submitList(it)
             listAdapter.notifyDataSetChanged()
@@ -145,9 +146,6 @@ class RecipesFragment() : Fragment() {
     }
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
 
-    fun resetBackButton() {
-        backButtonPressed = MutableLiveData<Boolean>().default(false)
-    }
 
     fun observerBackButtonPushed(): MutableLiveData<Boolean> {
         return backButtonPressed
@@ -157,15 +155,15 @@ class RecipesFragment() : Fragment() {
 }
 
 private fun createUnselectedList(filterOptions : List<String>, selectedList: MutableList<String>) : MutableList<String>{
-    val unslectedList = filterOptions.toMutableList()
+    val unselectedList = filterOptions.toMutableList()
     for (filter in filterOptions) {
         for (selected in selectedList) {
             if (filter.equals(selected)) {
-                unslectedList.remove(selected)
+                unselectedList.remove(selected)
             }
         }
     }
-    return unslectedList
+    return unselectedList
 }
 
 
