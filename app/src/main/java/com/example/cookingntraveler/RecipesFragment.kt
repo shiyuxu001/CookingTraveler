@@ -95,6 +95,7 @@ class RecipesFragment() : Fragment() {
                             }
                             // set text on textView
                             binding.categoryFilterDropDown.text = stringBuilder.toString()
+                            val notSelectedFilters =
                             viewModel.netFilterCategory(selectedCategories, filterOptions)
                         })
                     builder.setNegativeButton("Cancel",
@@ -143,9 +144,16 @@ class RecipesFragment() : Fragment() {
 
 }
 
-//private fun createUnselectedList(filterOptions : MutableList<String>, selectedList) : MutableList<String>{
-//
-//}
+private fun createUnselectedList(filterOptions : MutableList<String>, selectedList: MutableList<String>) : MutableList<String>{
+    for (filter in filterOptions) {
+        for (selected in selectedList) {
+            if (filter.equals(selected)) {
+                filterOptions.remove(selected)
+            }
+        }
+    }
+    return filterOptions
+}
 
 private fun initRecyclerViewDividers(rv: RecyclerView) {
     // Let's have dividers between list items
