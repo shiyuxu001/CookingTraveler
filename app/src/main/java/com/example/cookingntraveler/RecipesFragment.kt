@@ -2,7 +2,6 @@ package com.example.cookingntraveler
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.DialogInterface.OnMultiChoiceClickListener
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -96,7 +95,7 @@ class RecipesFragment() : Fragment() {
                             }
                             // set text on textView
                             binding.categoryFilterDropDown.text = stringBuilder.toString()
-                            viewModel.netFilterCategory(selectedCategories, reset = true, filterOptions)
+                            viewModel.netFilterCategory(selectedCategories, filterOptions)
                         })
                     builder.setNegativeButton("Cancel",
                         DialogInterface.OnClickListener { dialogInterface, i -> // dismiss dialog
@@ -111,7 +110,7 @@ class RecipesFragment() : Fragment() {
                                 // clear language list
                                 categoryList.clear()
 
-                                viewModel.netFilterCategory(filterOptions, reset = true, filterOptions)
+                                viewModel.netFilterCategory(emptyList<String>().toMutableList(), filterOptions)
                                 // clear text view value
                                 binding.categoryFilterDropDown.text = "Filter Recipes"
                             }
@@ -143,6 +142,10 @@ class RecipesFragment() : Fragment() {
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
 
 }
+
+//private fun createUnselectedList(filterOptions : MutableList<String>, selectedList) : MutableList<String>{
+//
+//}
 
 private fun initRecyclerViewDividers(rv: RecyclerView) {
     // Let's have dividers between list items

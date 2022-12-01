@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.example.cookingntraveler.databinding.FragmentMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -22,7 +24,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var geocoder: Geocoder
+    private val viewModel: MainViewModel by viewModels()
     private var selectedArea = MutableLiveData<String>().default("Starting")
+    private var inputtedCountry = MutableLiveData<String>().default("Starting")
     private var invalidCountryClickIndicator = MutableLiveData<Boolean>().default(false)
 
 
@@ -42,6 +46,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize map fragment
         geocoder = Geocoder(context)
+
+        binding.completeSearchBut.setOnClickListener{
+            val inputtedVal = binding.inputET.text.toString()
+            binding.inputET.text.clear()
+            inputtedCountry.value = viewModel.convertCountry(inputtedVal.capitalizeWords())
+        }
 
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
@@ -96,5 +106,12 @@ class HomeFragment : Fragment() {
     }
 
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
+
+    fun observeInputtedCountry(): MutableLiveData<String> {
+        return inputtedCountry
+    }
+
+    fun String.capitalizeWords(): String = split(" ").map { it.toLowerCase().capitalize() }.joinToString(" ")
+
 
 }

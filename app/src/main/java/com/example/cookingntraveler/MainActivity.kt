@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
         val mapFrag = HomeFragment()
         val recipeFrag = RecipesFragment()
 
-
         //open fragment
         getSupportFragmentManager()
             .beginTransaction().replace(binding.mapFL.id,mapFrag)
@@ -49,33 +48,32 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             viewModel.netRandomRecipe()
         }
 
-        // TODO: clean home fragment binding look & structure
-        binding.completeSearchBut.setOnClickListener{
-            val inputtedVal = binding.inputET.text.toString()
-            binding.inputET.text.clear()
-            val countryEntered = viewModel.convertCountry(inputtedVal)
-            if (inputtedVal.isEmpty()) {
+
+        mapFrag.observeInputtedCountry().observe(this) {
+        if(!it.equals("Starting")) {
+            if (it.isEmpty()) {
                 Toast.makeText(this, "Please enter a country name!", Toast.LENGTH_SHORT).show()
             }
-            if (countryEntered.equals("None")) {
-                Toast.makeText(this, "We don't have recipes from this country yet :'(", Toast.LENGTH_SHORT).show()
+            if (it.equals("None")) {
+                Toast.makeText(
+                    this,
+                    "We don't have recipes from this country yet :'(",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                viewModel.netCountry(countryEntered)
-                viewModel.netRetrieveCategories()
-
+                viewModel.netCountry(it)
 //                //added loading animation
 //                loadingAnimation = LoadingAnimation(this, "lottie_plane_anim.json")
 //                loadingAnimation.playAnimation(true)
 ////                LoadingAsync(this).execute()
 //                loadingAnimation.stopAnimation(activityMainBinding.root) //?? umm
 //                //then fragment replace thing: recipesFrag into here
-
                 supportFragmentManager.beginTransaction()
                     .replace(binding.mapFL.id, recipeFrag)
                     .commit()
             }
         }
-
+        }
 
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
@@ -93,14 +91,12 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             }
         }
 
-
         mapFrag.observeClickIndicator().observe(this) {
             if (it) {
                 Toast.makeText(this, "Please click a valid country!",Toast.LENGTH_SHORT)
             }
             mapFrag.resetInvalidCountryClickIndicator()
         }
-
     }
 
     override fun onFinishedLoading() {
