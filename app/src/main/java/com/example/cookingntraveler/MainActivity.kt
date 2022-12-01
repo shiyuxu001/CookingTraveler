@@ -101,7 +101,6 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
             if (it) {
                 Toast.makeText(this, "Please click a valid country!",Toast.LENGTH_SHORT)
             }
-            mapFrag.resetInvalidCountryClickIndicator()
         }
 
         recipeFrag.observerBackButtonPushed().observe(this) {

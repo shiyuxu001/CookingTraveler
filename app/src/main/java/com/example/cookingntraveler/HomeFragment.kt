@@ -93,10 +93,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun resetInvalidCountryClickIndicator() {
-        invalidCountryClickIndicator = MutableLiveData<Boolean>().default(false)
-    }
-
     fun observeSelectedArea(): MutableLiveData<String> {
         return selectedArea
     }
