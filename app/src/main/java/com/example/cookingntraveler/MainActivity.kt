@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
     private lateinit var activityMainBinding : ActivityMainBinding
+    var randomRecipeCountry = ""
+
 
     //for loading animation
     private lateinit var loadingAnimation : LoadingAnimation
@@ -46,19 +48,27 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         binding.random.setOnClickListener {
             viewModel.netRandomRecipe()
-            val singleRecipeFrag = SingleRecipeFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(binding.mapFL.id, singleRecipeFrag)
-                .commit()
-            singleRecipeFrag.observeLeaveDialog().observe(this) {
-                if (it) {
+            viewModel.observeSingleRecipe().observe(this){
+                if(it != null) {
+                    val singleRecipeFrag = SingleRecipeFragment.newInstance(it.meals!!.get(0).strMeal!!,
+                        it.meals!!.get(0).strInstructions!!, it.meals!!.get(0).strMealThumb!!)
+                    randomRecipeCountry = it.meals!!.get(0).strArea!!
                     supportFragmentManager.beginTransaction()
-                        .replace(binding.mapFL.id, recipeFrag)
+                        .replace(binding.mapFL.id, singleRecipeFrag)
                         .commit()
+                    singleRecipeFrag.observeLeaveDialog().observe(this) {
+                        if (it) {
+                            viewModel.netCountry(randomRecipeCountry)
+                            supportFragmentManager.beginTransaction()
+                                .replace(binding.mapFL.id, recipeFrag)
+                                .commit()
+                        }
+                    }
+
                 }
+
             }
         }
-
 
         mapFrag.observeInputtedCountry().observe(this) {
         if(!it.equals("Starting")) {
@@ -123,19 +133,19 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         }
 
+
 //        recipeFrag.observeCommunicateWithMain().observe(this) {
 //            Log.d("XXX", "RECIPE CLICK REGISTRED")
 //            if (it) {
 //                Log.d("XXX", "row adapter was clicked")
 //                recipeFrag.observeSendMainMealId().observe(this) {
-//                    val singleRecipeFrag = SingleRecipeFragment.newInstance(it)
-//                    supportFragmentManager.beginTransaction()
-//                        .replace(binding.mapFL.id, singleRecipeFrag)
-//                        .commit()
-//                    singleRecipeFrag.observeLeaveDialog().observe(this) {
-//                        if (it) {
+//                    viewModel.netSingleRecipe(it)
+//                    viewModel.observeSingleRecipe().observe(this){
+//                        if (it != null) {
+//                            val singleRecipeFrag = SingleRecipeFragment.newInstance(it.meals!!.get(0).strMeal!!,
+//                                it.meals!!.get(0).strInstructions!!, it.meals!!.get(0).strMealThumb!!)
 //                            supportFragmentManager.beginTransaction()
-//                                .replace(binding.mapFL.id, recipeFrag)
+//                                .replace(binding.mapFL.id, singleRecipeFrag)
 //                                .commit()
 //                        }
 //                    }
@@ -145,9 +155,10 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 //        }
 
     }
-
     override fun onFinishedLoading() {
         loadingAnimation.stopAnimation(activityMainBinding.root) //?
     }
+    fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
+
 
 }

@@ -28,12 +28,12 @@ class RecipeRVAdapter(context: Context)
         : RecyclerView.ViewHolder(recipeRowBinding.root) {
             init {
                 recipeRowBinding.root.setOnClickListener{
-                    Log.d("XXX", "ROW CLICK REGISTERED")
-                    mealId.value = this.itemId
+                    Log.d("XXX", "MEALID ${mealId.value}")
                     createPopUp.value = true
                 }
             }
         }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val recipeBinding = RowBinding.inflate(LayoutInflater.from(parent.context),

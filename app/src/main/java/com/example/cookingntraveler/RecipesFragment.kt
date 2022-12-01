@@ -57,7 +57,7 @@ class RecipesFragment() : Fragment() {
         initRecyclerViewDividers(binding.recyclerView)
 
         listAdapter.observeCreatePopUp().observe(viewLifecycleOwner) {
-            communicateWithMain.value = true
+            communicateWithMain.value = it
         }
         listAdapter.observeMealId().observe(viewLifecycleOwner) {
             sendMainMealId.value = it

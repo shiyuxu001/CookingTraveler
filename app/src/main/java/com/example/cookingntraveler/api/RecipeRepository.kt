@@ -10,7 +10,7 @@ class RecipeRepository(private val recipeApi: RecipesApi) {
         return recipeApi.getCategoryRecipes(category)
     }
 
-    suspend fun getRecipe(mealId: Long) : Recipe{
+    suspend fun getRecipe(mealId: Long) : SingleRecipe{
         return recipeApi.getRecipe(mealId)
     }
 
@@ -18,7 +18,7 @@ class RecipeRepository(private val recipeApi: RecipesApi) {
         return recipeApi.getAllCategories()
     }
 
-    suspend fun getRandomRecipe() : Recipe {
+    suspend fun getRandomRecipe() : SingleRecipe {
         return recipeApi.getRandomRecipe()
     }
 }

@@ -18,7 +18,7 @@ class MainViewModel : ViewModel() {
     private var processingList = mutableListOf<FilterRecipe>()
     //list that is displayed;
     private val displayedList = MutableLiveData<List<FilterRecipe>>()
-    private val singleRecipeDisplay = MutableLiveData<Recipe>()
+    private val singleRecipeDisplay = MutableLiveData<SingleRecipe>()
     private val categoryList = MutableLiveData<List<String>>()
     //returned by API calls
     private var recipesByCountry = mutableListOf<FilterRecipe>()
@@ -151,7 +151,7 @@ class MainViewModel : ViewModel() {
         return displayedList
     }
 
-    fun observeSingleRecipe(): MutableLiveData<Recipe> {
+    fun observeSingleRecipe(): MutableLiveData<SingleRecipe> {
         return singleRecipeDisplay
     }
 

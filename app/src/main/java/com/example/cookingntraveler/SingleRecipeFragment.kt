@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,6 +21,22 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
 
 class SingleRecipeFragment : DialogFragment() {
+    companion object {
+        const val titleKey = "recipeTitle"
+        const val instrKey = "instructionTitle"
+        const val thumbnailKey = "thumbnailTitle"
+        fun newInstance(recipeName: String, instructions: String, thumbnail: String): SingleRecipeFragment {
+            val frag = SingleRecipeFragment()
+            val bundle = Bundle()
+            bundle.putString(titleKey, recipeName)
+            bundle.putString(instrKey, instructions)
+            bundle.putString(thumbnailKey, thumbnail)
+
+            frag.arguments = bundle
+            return frag
+        }
+    }
+
 
     private var _binding: SingleRecipeBinding? = null
 
@@ -46,18 +63,15 @@ class SingleRecipeFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Initialize map fragment
-        viewModel.netRandomRecipe()
-        viewModel.observeSingleRecipe().observe(viewLifecycleOwner) {
-            binding.name.text = it.strMeal
+            binding.singleTitle.text = requireArguments().getString(titleKey)
             Glide.with(this.requireContext().applicationContext)
-                .load(it.strMealThumb)
+                .load(requireArguments().getString(thumbnailKey))
                 .placeholder(com.example.cookingntraveler.R.drawable.ingredients)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(binding.recipePic)
-            binding.instructions.text = it.strInstructions
-        }
+                .into(binding.singleImage)
+            binding.singleInstructions.text = requireArguments().getString(instrKey)
 
-        binding.name.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             leaveDialog.value = true
         }
     }

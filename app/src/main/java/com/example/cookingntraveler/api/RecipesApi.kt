@@ -18,13 +18,13 @@ interface RecipesApi {
     suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipes
 
     @GET("lookup.php")
-    suspend fun getRecipe(@Query("i") mealId: Long) : Recipe
+    suspend fun getRecipe(@Query("i") mealId: Long) : SingleRecipe
 
     @GET("categories.php")
     suspend fun getAllCategories() : Categories
 
     @GET("random.php")
-    suspend fun getRandomRecipe() :Recipe
+    suspend fun getRandomRecipe() :SingleRecipe
 
     companion object {
         // Leave this as a simple, base URL.  That way, we can have many different

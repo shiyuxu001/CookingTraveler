@@ -1,15 +1,16 @@
 package com.example.cookingntraveler.api
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class Recipe (
-    @SerializedName("idMeal") val idMeal : Int? = null,
-    @SerializedName("strMeal") val strMeal : String? = null,
-    @SerializedName("strDrinkAlternate") val strDrinkAlternate : String? = null,
-    @SerializedName("strCategory") val strCategory : String? = null,
-    @SerializedName("strArea") val strArea : String? = null,
-    @SerializedName("strInstructions") val strInstructions : String? = null,
-    @SerializedName("strMealThumb") val strMealThumb : String? = null,
+    @SerializedName("idMeal") @Expose val idMeal : Int? = null,
+    @SerializedName("strMeal") @Expose val strMeal : String? = null,
+    @SerializedName("strDrinkAlternate") @Expose val strDrinkAlternate : String? = null,
+    @SerializedName("strCategory") @Expose val strCategory : String? = null,
+    @SerializedName("strArea") @Expose val strArea : String? = null,
+    @SerializedName("strInstructions")  @Expose val strInstructions : String? = null,
+    @SerializedName("strMealThumb") @Expose val strMealThumb : String? = null,
     @SerializedName("strTags") val strTags : String? = null,
     @SerializedName("strYoutube") val strYoutube : String? = null,
     @SerializedName("strIngredient1") val strIngredient1 : String? = null,

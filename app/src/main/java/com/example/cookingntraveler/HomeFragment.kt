@@ -84,7 +84,6 @@ class HomeFragment : Fragment() {
                     //not a country
                     invalidCountryClickIndicator.value = true
                     // tells main acitivity to make the toast
-
                 }
 
                 googleMap.uiSettings.isZoomControlsEnabled = true
