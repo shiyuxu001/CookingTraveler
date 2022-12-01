@@ -46,6 +46,17 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         binding.random.setOnClickListener {
             viewModel.netRandomRecipe()
+            val singleRecipeFrag = SingleRecipeFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(binding.mapFL.id, singleRecipeFrag)
+                .commit()
+            singleRecipeFrag.observeLeaveDialog().observe(this) {
+                if (it) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(binding.mapFL.id, recipeFrag)
+                        .commit()
+                }
+            }
         }
 
 
@@ -105,13 +116,34 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
 
         recipeFrag.observerBackButtonPushed().observe(this) {
             if(it) {
-                Log.d("XXX", "true")
                 supportFragmentManager.beginTransaction()
                     .replace(binding.mapFL.id, mapFrag)
                     .commit()
             }
 
         }
+
+//        recipeFrag.observeCommunicateWithMain().observe(this) {
+//            Log.d("XXX", "RECIPE CLICK REGISTRED")
+//            if (it) {
+//                Log.d("XXX", "row adapter was clicked")
+//                recipeFrag.observeSendMainMealId().observe(this) {
+//                    val singleRecipeFrag = SingleRecipeFragment.newInstance(it)
+//                    supportFragmentManager.beginTransaction()
+//                        .replace(binding.mapFL.id, singleRecipeFrag)
+//                        .commit()
+//                    singleRecipeFrag.observeLeaveDialog().observe(this) {
+//                        if (it) {
+//                            supportFragmentManager.beginTransaction()
+//                                .replace(binding.mapFL.id, recipeFrag)
+//                                .commit()
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+
     }
 
     override fun onFinishedLoading() {

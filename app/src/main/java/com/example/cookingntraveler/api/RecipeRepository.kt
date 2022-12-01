@@ -10,7 +10,7 @@ class RecipeRepository(private val recipeApi: RecipesApi) {
         return recipeApi.getCategoryRecipes(category)
     }
 
-    suspend fun getRecipe(mealId: Int) : Recipe{
+    suspend fun getRecipe(mealId: Long) : Recipe{
         return recipeApi.getRecipe(mealId)
     }
 

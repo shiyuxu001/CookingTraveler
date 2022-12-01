@@ -28,10 +28,10 @@ class RecipesFragment() : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
-    //    )
     var selectedCategories: MutableList<String> = arrayListOf()
     var backButtonPressed = MutableLiveData<Boolean>().default(false)
-
+    var communicateWithMain = MutableLiveData<Boolean>().default(false)
+    var sendMainMealId = MutableLiveData<Long>().default(0)
 
 
     private lateinit var listAdapter:RecipeRVAdapter
@@ -56,8 +56,14 @@ class RecipesFragment() : Fragment() {
         listAdapter.submitList(viewModel.observeDisplayedList().value)
         initRecyclerViewDividers(binding.recyclerView)
 
+        listAdapter.observeCreatePopUp().observe(viewLifecycleOwner) {
+            communicateWithMain.value = true
+        }
+        listAdapter.observeMealId().observe(viewLifecycleOwner) {
+            sendMainMealId.value = it
+        }
+
         binding.backButton.setOnClickListener {
-            Log.d("XXX", "BUTTON PRESS REGISTERED")
             backButtonPressed.value = true
         }
 
@@ -138,6 +144,7 @@ class RecipesFragment() : Fragment() {
             listAdapter.submitList(it)
             listAdapter.notifyDataSetChanged()
         }
+
     }
 
     override fun onDestroyView() {
@@ -149,6 +156,14 @@ class RecipesFragment() : Fragment() {
 
     fun observerBackButtonPushed(): MutableLiveData<Boolean> {
         return backButtonPressed
+    }
+
+    fun observeCommunicateWithMain(): MutableLiveData<Boolean> {
+        return communicateWithMain
+    }
+
+    fun observeSendMainMealId() : MutableLiveData<Long> {
+        return sendMainMealId
     }
 
 

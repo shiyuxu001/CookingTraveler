@@ -2,8 +2,11 @@ package com.example.cookingntraveler
 
 import android.R
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,12 +21,16 @@ class RecipeRVAdapter(context: Context)
     : ListAdapter<FilterRecipe,
         RecipeRVAdapter.ViewHolder>(Diff()) {
     private val context = context
-        inner class ViewHolder(val recipeRowBinding : RowBinding)
+    var createPopUp = MutableLiveData<Boolean>().default(false)
+    var mealId = MutableLiveData<Long>().default(0)
+
+    inner class ViewHolder(val recipeRowBinding : RowBinding)
         : RecyclerView.ViewHolder(recipeRowBinding.root) {
             init {
                 recipeRowBinding.root.setOnClickListener{
-                    //to go pop up/overlay fragment w full recipe
-                    // clickListener(songRowBinding.root.rootView , songRowBinding.songTitle.text.toString())
+                    Log.d("XXX", "ROW CLICK REGISTERED")
+                    mealId.value = this.itemId
+                    createPopUp.value = true
                 }
             }
         }
@@ -56,5 +63,14 @@ class RecipeRVAdapter(context: Context)
                     && oldItem.strMeal == newItem.strMeal
                     && oldItem.strMealThumb == newItem.strMealThumb
         }
+    }
+    fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
+
+    fun observeCreatePopUp() : MutableLiveData<Boolean> {
+        return createPopUp
+    }
+
+    fun observeMealId() : MutableLiveData<Long> {
+        return mealId
     }
 }

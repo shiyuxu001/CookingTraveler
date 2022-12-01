@@ -18,6 +18,7 @@ class MainViewModel : ViewModel() {
     private var processingList = mutableListOf<FilterRecipe>()
     //list that is displayed;
     private val displayedList = MutableLiveData<List<FilterRecipe>>()
+    private val singleRecipeDisplay = MutableLiveData<Recipe>()
     private val categoryList = MutableLiveData<List<String>>()
     //returned by API calls
     private var recipesByCountry = mutableListOf<FilterRecipe>()
@@ -77,6 +78,17 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun netSingleRecipe(mealId: Long) {
+        viewModelScope.launch (
+            context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            recipesByCountry.clear()
+            val recipe = recipeRepository.getRecipe(mealId)
+            if (recipe != null) {
+                singleRecipeDisplay.postValue(recipe)
+            }
+        }
+    }
+
     //to filter the recipes displayed when filtering
     fun netFilterCategory(unselectedFilters: MutableList<String>, fullFilterList: MutableList<String>?) {
         viewModelScope.launch(
@@ -115,7 +127,9 @@ class MainViewModel : ViewModel() {
             context = viewModelScope.coroutineContext + Dispatchers.IO) {
 
             val random = recipeRepository.getRandomRecipe()
-            // TODO, align with design of showing a single recipe
+            if (random != null) {
+                singleRecipeDisplay.postValue(random)
+            }
         }
     }
 
@@ -135,6 +149,10 @@ class MainViewModel : ViewModel() {
 
     fun observeDisplayedList(): MutableLiveData<List<FilterRecipe>> {
         return displayedList
+    }
+
+    fun observeSingleRecipe(): MutableLiveData<Recipe> {
+        return singleRecipeDisplay
     }
 
     fun observeCategoryList(): MutableLiveData<List<String>> {

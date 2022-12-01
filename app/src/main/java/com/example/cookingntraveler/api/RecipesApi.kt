@@ -18,7 +18,7 @@ interface RecipesApi {
     suspend fun getCategoryRecipes(@Query("c") category: String): FilterRecipes
 
     @GET("lookup.php")
-    suspend fun getRecipe(@Query("i") mealId: Int) : Recipe
+    suspend fun getRecipe(@Query("i") mealId: Long) : Recipe
 
     @GET("categories.php")
     suspend fun getAllCategories() : Categories
