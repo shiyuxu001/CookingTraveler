@@ -72,6 +72,7 @@ class SingleRecipeFragment : DialogFragment() {
             binding.singleInstructions.text = requireArguments().getString(instrKey)
 
         binding.backBtn.setOnClickListener {
+            Log.d("XXX", "PRESSED BACK")
             leaveDialog.value = true
         }
     }

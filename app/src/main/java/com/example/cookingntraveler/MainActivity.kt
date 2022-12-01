@@ -134,25 +134,32 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
         }
 
 
-//        recipeFrag.observeCommunicateWithMain().observe(this) {
-//            Log.d("XXX", "RECIPE CLICK REGISTRED")
-//            if (it) {
-//                Log.d("XXX", "row adapter was clicked")
-//                recipeFrag.observeSendMainMealId().observe(this) {
-//                    viewModel.netSingleRecipe(it)
-//                    viewModel.observeSingleRecipe().observe(this){
-//                        if (it != null) {
-//                            val singleRecipeFrag = SingleRecipeFragment.newInstance(it.meals!!.get(0).strMeal!!,
-//                                it.meals!!.get(0).strInstructions!!, it.meals!!.get(0).strMealThumb!!)
-//                            supportFragmentManager.beginTransaction()
-//                                .replace(binding.mapFL.id, singleRecipeFrag)
-//                                .commit()
-//                        }
-//                    }
-//                }
-//            }
-//
-//        }
+        recipeFrag.observeCommunicateWithMain().observe(this) {
+            if (it) {
+                Log.d("XXX", "row adapter was clicked")
+                recipeFrag.observeSendMainMealId().observe(this) {
+                    viewModel.netSingleRecipe(it)
+                    viewModel.observeSingleRecipe().observe(this){
+                        if (it != null) {
+                            val singleRecipeFrag = SingleRecipeFragment.newInstance(it.meals!!.get(0).strMeal!!,
+                                it.meals!!.get(0).strInstructions!!, it.meals!!.get(0).strMealThumb!!)
+                            supportFragmentManager.beginTransaction()
+                                .replace(binding.mapFL.id, singleRecipeFrag)
+                                .commit()
+                            singleRecipeFrag.observeLeaveDialog().observe(this) {
+                                if (it) {
+                                    viewModel.netCountry(randomRecipeCountry)
+                                    supportFragmentManager.beginTransaction()
+                                        .replace(binding.mapFL.id, recipeFrag)
+                                        .commit()
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+        }
 
     }
     override fun onFinishedLoading() {

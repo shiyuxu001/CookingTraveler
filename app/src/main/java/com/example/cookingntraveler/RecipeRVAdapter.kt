@@ -24,11 +24,23 @@ class RecipeRVAdapter(context: Context)
     var createPopUp = MutableLiveData<Boolean>().default(false)
     var mealId = MutableLiveData<Long>().default(0)
 
+    private fun getPos(holder: ViewHolder) : Int {
+        val pos = holder.adapterPosition
+        // notifyDataSetChanged was called, so position is not known
+//        if( pos == RecyclerView.NO_POSITION) {
+//            return holder.getA
+//        }
+        return pos
+    }
+
     inner class ViewHolder(val recipeRowBinding : RowBinding)
         : RecyclerView.ViewHolder(recipeRowBinding.root) {
             init {
                 recipeRowBinding.root.setOnClickListener{
-                    Log.d("XXX", "MEALID ${mealId.value}")
+                    val recipe = getItem(getPos(this))
+                    notifyDataSetChanged()
+                    Log.d("XXX", "MEALID ${recipe.idMeal}")
+                    mealId.value = recipe.idMeal
                     createPopUp.value = true
                 }
             }
