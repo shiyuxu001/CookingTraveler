@@ -75,6 +75,12 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
         }
         }
 
+        viewModel.observeDisplayedList().observe(this) {
+            if(it.isEmpty()) {
+                Toast.makeText(this,"No recipes match applied filter(s)", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         mapFrag.observeSelectedArea().observe(this) {
             if (!it.equals("Starting")) {
                 val countryEntered = viewModel.convertCountry(it)

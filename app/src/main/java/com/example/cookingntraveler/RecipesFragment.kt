@@ -95,8 +95,8 @@ class RecipesFragment() : Fragment() {
                             }
                             // set text on textView
                             binding.categoryFilterDropDown.text = stringBuilder.toString()
-                            val notSelectedFilters =
-                            viewModel.netFilterCategory(selectedCategories, filterOptions)
+                            val unSelectedFilters = createUnselectedList(filterOptions.toList(), selectedCategories)
+                            viewModel.netFilterCategory(unSelectedFilters, filterOptions)
                         })
                     builder.setNegativeButton("Cancel",
                         DialogInterface.OnClickListener { dialogInterface, i -> // dismiss dialog
@@ -130,6 +130,7 @@ class RecipesFragment() : Fragment() {
         }
 
         viewModel.observeDisplayedList().observe(viewLifecycleOwner) {
+//            if ()
             //list to be displayed is changed
             listAdapter.submitList(it)
             listAdapter.notifyDataSetChanged()
@@ -144,15 +145,16 @@ class RecipesFragment() : Fragment() {
 
 }
 
-private fun createUnselectedList(filterOptions : MutableList<String>, selectedList: MutableList<String>) : MutableList<String>{
+private fun createUnselectedList(filterOptions : List<String>, selectedList: MutableList<String>) : MutableList<String>{
+    val unslectedList = filterOptions.toMutableList()
     for (filter in filterOptions) {
         for (selected in selectedList) {
             if (filter.equals(selected)) {
-                filterOptions.remove(selected)
+                unslectedList.remove(selected)
             }
         }
     }
-    return filterOptions
+    return unslectedList
 }
 
 private fun initRecyclerViewDividers(rv: RecyclerView) {
