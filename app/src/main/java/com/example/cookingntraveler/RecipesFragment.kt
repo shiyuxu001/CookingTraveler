@@ -29,6 +29,8 @@ class RecipesFragment() : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     //    )
     var selectedCategories: MutableList<String> = arrayListOf()
+    var backButtonPressed = MutableLiveData<Boolean>().default(false)
+
 
 
     private lateinit var listAdapter:RecipeRVAdapter
@@ -41,7 +43,6 @@ class RecipesFragment() : Fragment() {
 
         _binding = RecipesFragmentBinding.inflate(inflater, container, false)
 
-
         return binding.root
     }
 
@@ -53,6 +54,10 @@ class RecipesFragment() : Fragment() {
         binding.recyclerView.adapter = listAdapter
         listAdapter.submitList(viewModel.observeDisplayedList().value)
         initRecyclerViewDividers(binding.recyclerView)
+
+        binding.backButton.setOnClickListener {
+            backButtonPressed.value = true
+        }
 
         viewModel.observeCategoryList().observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -96,7 +101,11 @@ class RecipesFragment() : Fragment() {
                             // set text on textView
                             binding.categoryFilterDropDown.text = stringBuilder.toString()
                             val unSelectedFilters = createUnselectedList(filterOptions.toList(), selectedCategories)
-                            viewModel.netFilterCategory(unSelectedFilters, filterOptions)
+                            if (unSelectedFilters.size == filterOptions.size) {
+                                viewModel.netFilterCategory(emptyList<String>().toMutableList(), filterOptions)
+                            } else {
+                                viewModel.netFilterCategory(unSelectedFilters, filterOptions)
+                            }
                         })
                     builder.setNegativeButton("Cancel",
                         DialogInterface.OnClickListener { dialogInterface, i -> // dismiss dialog
@@ -122,13 +131,6 @@ class RecipesFragment() : Fragment() {
             }
         }
 
-
-
-        binding.backButton.setOnClickListener {
-            // TODO: how to pop off stack and return to exploring map?
-            activity?.supportFragmentManager?.popBackStack()
-        }
-
         viewModel.observeDisplayedList().observe(viewLifecycleOwner) {
 //            if ()
             //list to be displayed is changed
@@ -143,6 +145,15 @@ class RecipesFragment() : Fragment() {
     }
     fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }
 
+    fun resetBackButton() {
+        backButtonPressed = MutableLiveData<Boolean>().default(false)
+    }
+
+    fun observerBackButtonPushed(): MutableLiveData<Boolean> {
+        return backButtonPressed
+    }
+
+
 }
 
 private fun createUnselectedList(filterOptions : List<String>, selectedList: MutableList<String>) : MutableList<String>{
@@ -156,6 +167,7 @@ private fun createUnselectedList(filterOptions : List<String>, selectedList: Mut
     }
     return unslectedList
 }
+
 
 private fun initRecyclerViewDividers(rv: RecyclerView) {
     // Let's have dividers between list items

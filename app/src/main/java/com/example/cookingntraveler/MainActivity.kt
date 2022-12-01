@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.ui.AppBarConfiguration
 import com.example.cookingntraveler.databinding.ActivityMainBinding
 import com.example.cookingntraveler.databinding.ContentMainBinding
@@ -102,6 +103,16 @@ class MainActivity : AppCompatActivity(), LoadingImplementation {
                 Toast.makeText(this, "Please click a valid country!",Toast.LENGTH_SHORT)
             }
             mapFrag.resetInvalidCountryClickIndicator()
+        }
+
+        recipeFrag.observerBackButtonPushed().observe(this) {
+            if(it) {
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.mapFL.id, recipeFrag)
+                    .commit()
+                recipeFrag.resetBackButton()
+            }
+
         }
     }
 
